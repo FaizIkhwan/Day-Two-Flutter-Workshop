@@ -4,6 +4,9 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'homepage.dart';
+import 'dart:async';
 
 class Register extends StatefulWidget {
   @override
@@ -12,6 +15,7 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 
+  final String url = "http://35.240.250.178/register.php";
   TextEditingController usernameController = TextEditingController();
   TextEditingController firstnameController = TextEditingController();
   TextEditingController lastnameController = TextEditingController();
@@ -97,20 +101,7 @@ class _RegisterState extends State<Register> {
 
                     RaisedButton(
                       child: Text("Register"),
-                      onPressed: () {
-                        if(formKey.currentState.validate()) {
-                          String username = usernameController.text;
-                          String firstname = firstnameController.text;
-                          String lastname = lastnameController.text;
-                          String password = passwordController.text;
-                          String confirmPassword = confirmPasswordController.text;
-
-//                          if(password == confirmPassword)
-                            // TODO: register user
-//                          else
-                            // TODO: display pop up
-                        }
-                      },
+                      onPressed: registerButtonPressed,
                     ), // end RaisedButton
                   ],
                 ),
@@ -119,6 +110,58 @@ class _RegisterState extends State<Register> {
           ), // end column
         ),
       ),
+    );
+  }
+
+  void registerButtonPressed() {
+    if(formKey.currentState.validate()) {
+      String username = usernameController.text;
+      String firstname = firstnameController.text;
+      String lastname = lastnameController.text;
+      String password = passwordController.text;
+      String confirmPassword = confirmPasswordController.text;
+
+      if(password == confirmPassword) {
+        register(username, firstname, lastname, password);
+      } else {
+        _showDialog();
+      }
+    }
+  }
+
+  Future<void> register (String username, String firstName, String lastName, String password) async {
+    final response = await http.post(url, body: {
+      "username" : username,
+      "first_name" : firstName,
+      "last_name" : lastName,
+      "password" : password,
+    });
+
+    String fullName = firstName + " " + lastName;
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) => HomePage(username, fullName)
+    ));
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Password does not match"),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      }
     );
   }
 

@@ -4,6 +4,10 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+import 'homepage.dart';
 import 'package:day_two_flutter_workshop/register.dart';
 
 class Login extends StatefulWidget {
@@ -13,6 +17,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
+  final String url = "http://35.240.250.178/loginn.php";
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -30,6 +35,9 @@ class _LoginState extends State<Login> {
             children: <Widget>[
 
               Text("Login"),
+
+              // insert image
+              Image.asset("assets/images/cat.jpeg"),
 
               Form(
                 key: formKey,
@@ -66,7 +74,7 @@ class _LoginState extends State<Login> {
                           String username = usernameController.text;
                           String password = passwordController.text;
 
-                          // TODO: Login user
+                          login(username, password);
                         }
                       },
                     ), // end RaisedButton
@@ -90,6 +98,24 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  Future<void> login(String username, String password) async {
+    final response = await http.post(url, body: {
+      "username" : username,
+      "password" : password,
+    });
+
+    var dataUser = json.decode(response.body);
+
+    String responseUsername = dataUser[0]["username"];
+    String responseFirstName = dataUser[0]["first_name"];
+    String responseLastName = dataUser[0]["last_name"];
+
+    String fullName = responseFirstName + " " + responseLastName;
+    Navigator.push(context, MaterialPageRoute(
+        builder: (BuildContext context) => HomePage(responseUsername, fullName)
+    ));
   }
 
 }
