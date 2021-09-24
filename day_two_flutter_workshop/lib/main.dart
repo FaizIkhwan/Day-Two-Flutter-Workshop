@@ -14,7 +14,7 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Note",
+      title: "Simple Apps",
       debugShowCheckedModeBanner: false,
       home: Login(),
     ); // end materialapp

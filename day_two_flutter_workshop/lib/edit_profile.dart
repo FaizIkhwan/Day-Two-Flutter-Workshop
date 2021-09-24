@@ -32,7 +32,7 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Edit profile"),),
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Container(
           margin: EdgeInsets.all(30.0),
